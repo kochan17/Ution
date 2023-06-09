@@ -8,11 +8,11 @@ class ConversationsController < ApplicationController
   def create
     service = OpenaiService.new
     message = params[:message]
-    persona_id = params[:persona_id]
-    persona = Persona.find(persona_id)
+    conversation_id = params[:conversation_id]  # conversation_idを受け取るようにします。
+    persona = Persona.find(params[:persona_id])
 
     # ユーザーからのメッセージを保存
-    user_message = Message.create(conversation_id: params[:id], sender: current_user, content: message)
+    user_message = Message.create(conversation_id: conversation_id, sender: current_user, content: message)  # conversation_idを使用します。
 
     # ペルソナの特性を設定するシステムメッセージ
     system_message = {
@@ -33,7 +33,7 @@ class ConversationsController < ApplicationController
     response = service.chat(messages)
 
     # ペルソナからの応答を保存
-    Message.create(conversation_id: params[:id], sender: persona, content: response)
+    Message.create(conversation_id: conversation_id, sender: persona, content: response)  # conversation_idを使用します。
 
     # 応答をクライアントに返す
     render json: { message: response }

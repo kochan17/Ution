@@ -11,6 +11,7 @@
 
 <form id="new_message" onsubmit="sendMessage(event)">
   <input type="hidden" id="conversation-id" value="<%= @conversation.id %>">
+  <input type="hidden" id="persona-id" value="<%= @conversation.persona.id %>"> <!-- ペルソナのIDを追加 -->
   <input type="text" id="message_content">
   <input type="submit" value="送信">
 </form>
@@ -21,14 +22,15 @@ function sendMessage(event) {
 
   var message = document.getElementById('message_content').value;
   var conversationId = document.getElementById('conversation-id').value;
+  var personaId = document.getElementById('persona-id').value; // ペルソナのIDを取得
 
-  fetch('/conversations/' + conversationId, {
+  fetch('/conversations', { // fetchを使用してメッセージを送信
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
     },
-    body: JSON.stringify({ message: message })
+    body: JSON.stringify({ message: message, conversation_id: conversationId, persona_id: personaId }) // conversation_idとpersona_idを含める
   })
   .then(function(response) {
     return response.json();
@@ -39,5 +41,26 @@ function sendMessage(event) {
     messageDiv.textContent = data.message;
     messagesDiv.appendChild(messageDiv);
   });
+
+  document.getElementById('message_content').value = '';
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  createSocket();
+});
+
+function createSocket() {
+  var cable = ActionCable.createConsumer();
+  var conversationId = document.getElementById('conversation-id').value;
+
+  cable.subscriptions.create({ channel: 'ConversationChannel', id: conversationId }, {
+    received: function(data) {
+      var messagesDiv = document.getElementById('messages');
+      var messageDiv = document.createElement('div');
+      messageDiv.textContent = data.message;
+      messagesDiv.appendChild(messageDiv);
+    }
+  });
+}
+
 </script>
