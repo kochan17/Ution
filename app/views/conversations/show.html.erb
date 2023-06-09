@@ -1,0 +1,43 @@
+<h1>Chat with <%= @conversation.persona.name %></h1>
+
+<div id="messages">
+  <% @conversation.messages.each do |message| %>
+    <div>
+      <strong><%= message.sender == current_user ? 'You' : @conversation.persona.name %>:</strong>
+      <%= message.content %>
+    </div>
+  <% end %>
+</div>
+
+<form id="new_message" onsubmit="sendMessage(event)">
+  <input type="hidden" id="conversation-id" value="<%= @conversation.id %>">
+  <input type="text" id="message_content">
+  <input type="submit" value="送信">
+</form>
+
+<script>
+function sendMessage(event) {
+  event.preventDefault();
+
+  var message = document.getElementById('message_content').value;
+  var conversationId = document.getElementById('conversation-id').value;
+
+  fetch('/conversations/' + conversationId, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ message: message })
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    var messagesDiv = document.getElementById('messages');
+    var messageDiv = document.createElement('div');
+    messageDiv.textContent = data.message;
+    messagesDiv.appendChild(messageDiv);
+  });
+}
+</script>

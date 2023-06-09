@@ -1,0 +1,38 @@
+<h1>Chat with <%= @persona.name %></h1>
+
+<div id="conversation">
+  <!-- ここに応答を表示 -->
+</div>
+
+<form id="message-form">
+  <input type="hidden" id="persona-id" value="<%= @persona.id %>">
+  <input type="text" id="message-input">
+  <button type="submit">送信</button>
+</form>
+
+<script>
+document.getElementById('message-form').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  var message = document.getElementById('message-input').value;
+  var personaId = document.getElementById('persona-id').value;
+
+  fetch('/conversations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ message: message, persona_id: personaId })
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    var conversationDiv = document.getElementById('conversation');
+    var messageDiv = document.createElement('div');
+    messageDiv.textContent = data.message;
+    conversationDiv.appendChild(messageDiv);
+  });
+});
+</script>

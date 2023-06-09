@@ -1,0 +1,11 @@
+<h1>Welcome, <%= current_user.email %>!</h1>
+
+<% @personas.each do |persona| %>
+  <div>
+    <h2><%= persona.name %></h2>
+    <p><%= persona.description %></p>
+    <%= button_to 'Choose this persona', new_conversation_path(persona_id: persona.id) %>
+  </div>
+<% end %>
+
+<%= link_to 'Logout', destroy_user_session_path, method: :delete %>

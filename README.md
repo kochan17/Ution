@@ -1,24 +1,28 @@
-# README
+# データベース設計
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Usersテーブル
 
-Things you may want to cover:
+| Column      | Type   | Options     |
+| ----------- | ------ | ----------- |
+| id          | bigint | primary key |
+| username    | string | null: false |
+| password    | string | null: false |
+| email       | string | null: false |
 
-* Ruby version
+## Botsテーブル
 
-* System dependencies
+| Column      | Type   | Options     |
+| ----------- | ------ | ----------- |
+| id          | bigint | primary key |
+| botname     | string | null: false |
+| description | text   | null: false |
 
-* Configuration
+## Conversationsテーブル
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+| Column      | Type   | Options                        |
+| ----------- | ------ | ------------------------------ |
+| id          | bigint | primary key                    |
+| user_id     | bigint | null: false, foreign key (Users) |
+| bot_id      | bigint | null: false, foreign key (Bots) |
+| content     | text   | null: false                    |
+| created_at  | datetime | null: false                  |
