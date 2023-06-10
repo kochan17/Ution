@@ -2,11 +2,11 @@ require 'openai'
 
 class OpenaiService
   def initialize
-    Openai.configuration.api_key = ENV["OPENAI_API_KEY"]
+    OpenAI.api_key = ENV["OPENAI_API_KEY"]
   end
 
   def chat(message)
-    response = Openai.ChatCompletion.create(
+    response = OpenAI::ChatCompletion.create(
       model: "gpt-3.5-turbo",
       messages: [
         {
