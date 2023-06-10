@@ -8,7 +8,7 @@ class OpenaiService
   end
 
   def chat(message)
-    uri = URI.parse("https://api.openai.com/v1/engines/davinci-codex/completions")
+    uri = URI.parse("https://api.openai.com/v1/engines/text-davinci-002/completions") # モデル名を修正
     request = Net::HTTP::Post.new(uri)
     request.content_type = "application/json"
     request["Authorization"] = "Bearer #{@api_key}"
@@ -28,5 +28,5 @@ class OpenaiService
     json = JSON.parse(response.body)
     puts json # レスポンスの内容をログに出力
     json['choices'][0]['text'].strip
-  end
+  end  
 end
